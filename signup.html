@@ -1,0 +1,87 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Sign Up - School Community Hub</title>
+    <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+    <header>
+        <nav>
+            <ul>
+                <li><a href="index.html">Home</a></li>
+                <li><a href="community.html">Community</a></li>
+                <li><a href="mentorship.html">Mentorship</a></li>
+                <li><a href="news.html">News</a></li>
+                <li><a href="login.html">Login</a></li>
+                <li><a href="signup.html">Sign Up</a></li>
+            </ul>
+        </nav>
+    </header>
+    <main>
+        <h1>Sign Up</h1>
+        <form id="signup-form">
+            <input type="text" id="fullname" placeholder="Full Name" required>
+            <input type="email" id="email" placeholder="Email" required>
+            <input type="password" id="password" placeholder="Password" required>
+            <input type="password" id="confirm-password" placeholder="Confirm Password" required>
+            <select id="user-type" required>
+                <option value="">Select User Type</option>
+                <option value="student">Student</option>
+                <option value="alumni">Alumni</option>
+            </select>
+            <button type="submit" id = "signupButton">Sign Up</button>
+        </form>
+
+        <script type="module">
+          // Import the functions you need from the SDKs you need
+          import { initializeApp } from "https://www.gstatic.com/firebasejs/11.0.1/firebase-app.js";
+          // TODO: Add SDKs for Firebase products that you want to use
+          // https://firebase.google.com/docs/web/setup#available-libraries
+
+          // Your web app's Firebase configuration
+          const firebaseConfig = {
+            apiKey: "AIzaSyBS8a2A7LOlRs9_lBXOv_fPud1iLg9xwO0",
+            authDomain: "loginsystem-80747.firebaseapp.com",
+            projectId: "loginsystem-80747",
+            storageBucket: "loginsystem-80747.firebasestorage.app",
+            messagingSenderId: "1098923411124",
+            appId: "1:1098923411124:web:c10f65f41de6928610f9e1"
+          };
+
+          // Initialize Firebase
+          const app = initializeApp(firebaseConfig);
+
+          import { getAuth, createUserWithEmailAndPassword } from "https://www.gstatic.com/firebasejs/11.0.1/firebase-auth.js";
+            document.getElementById('signupButton').addEventListener('click', (event)=>{
+
+                event.preventDefault()
+                const auth = getAuth()
+                const email = document.getElementById('email').value
+                const password = document.getElementById('password').value
+                createUserWithEmailAndPassword(auth, email, password)
+                  .then((userCredential) => {
+                    // Signed in
+                    const user = userCredential.user;
+                    // ...
+                  })
+                  .catch((error) => {
+                    const errorCode = error.code;
+                    const errorMessage = error.message;
+                    // ..
+                  });
+
+            
+                
+                
+            })
+        </script>
+
+    </main>
+    <footer>
+        <p>&copy; 2023 School Community Hub. All rights reserved.</p>
+    </footer>
+    <script src="script.js"></script>
+</body>
+</html>

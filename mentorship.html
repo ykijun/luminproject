@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Community - School Community Hub</title>
+    <title>Mentorship - School Community Hub</title>
     <link rel="stylesheet" href="styles.css">
 </head>
 <body>
@@ -20,16 +20,20 @@
         </nav>
     </header>
     <main>
-        <h1>Community</h1>
-        <div id="post-form">
-            <h2>Create a New Post</h2>
-            <form id="new-post-form">
-                <input type="text" id="post-title" placeholder="Title" required>
-                <textarea id="post-content" placeholder="Content" required></textarea>
-                <button type="submit">Submit Post</button>
+        <h1>Mentorship Program</h1>
+        <div id="mentorship-form">
+            <h2>Find a Mentor/Mentee</h2>
+            <form id="mentorship-match-form">
+                <select id="role" required>
+                    <option value="">Select Role</option>
+                    <option value="mentor">Mentor</option>
+                    <option value="mentee">Mentee</option>
+                </select>
+                <input type="text" id="skills" placeholder="Skills/Interests (comma-separated)" required>
+                <button type="submit">Find Match</button>
             </form>
         </div>
-        <div id="posts-container"></div>
+        <div id="matches-container"></div>
     </main>
     <footer>
         <p>&copy; 2023 School Community Hub. All rights reserved.</p>

@@ -5,6 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Community - School Community Hub</title>
     <link rel="stylesheet" href="styles.css">
+    
 </head>
 <body>
     <header>
@@ -34,7 +35,9 @@
     <script type="module">
         // Import the functions you need from the SDKs you need
         import { initializeApp } from "https://www.gstatic.com/firebasejs/11.0.2/firebase-app.js";
+        import { getDatabase, ref, set,child, push, update } from "https://www.gstatic.com/firebasejs/11.0.2/firebase-database.js";
         // TODO: Add SDKs for Firebase products that you want to use
+
         // https://firebase.google.com/docs/web/setup#available-libraries
 
         // Your web app's Firebase configuration
@@ -50,7 +53,7 @@
 
         // Initialize Firebase
         const app = initializeApp(firebaseConfig);
-        const database = database();
+        const database = getDatabase(app);
 
         // Save Post to Firebase
         const postForm = document.getElementById('new-post-form');
@@ -60,15 +63,20 @@
             const title = document.getElementById('post-title').value;
             const content = document.getElementById('post-content').value;
 
-            const postRef = database.ref('posts');
-
             // Save a new post
-            const newPost = postRef.push(); // Generate a unique ID
-            newPost.set({
+            const db = getDatabase();
+            const postData = {
                 title: title,
                 content: content,
                 timestamp: Date.now()
-            })
+              };
+            
+            const newPostKey = push(child(ref(db), 'posts')).key;
+            const updates = {};
+            updates['/posts/' + newPostKey] = postData;
+            
+
+            return update(ref(db), updates)
             .then(() => {
                 alert('Post saved successfully!');
                 postForm.reset();

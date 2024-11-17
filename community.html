@@ -31,6 +31,48 @@
         </div>
         <div id="posts-container"></div>
     </main>
+    <script>
+        // Firebase Configuration
+        const firebaseConfig = {
+            apiKey: "AIzaSyAgeigOO0jIvjMOGQkZcH1iseehLaF7iLc",
+            authDomain: "sample-login-1cac6.firebaseapp.com",
+            projectId: "sample-login-1cac6",
+            storageBucket: "sample-login-1cac6.firebasestorage.app",
+            messagingSenderId: "11295660386",
+            appId: "1:11295660386:web:617ff045e74e1a7fcef43b",
+            measurementId: "G-J5S4KBF0F3"
+          };
+
+        // Initialize Firebase
+        const app = firebase.initializeApp(firebaseConfig);
+        const database = firebase.database();
+
+        // Save Post to Firebase
+        const postForm = document.getElementById('new-post-form');
+        postForm.addEventListener('submit', (e) => {
+            e.preventDefault();
+
+            const title = document.getElementById('post-title').value;
+            const content = document.getElementById('post-content').value;
+
+            const postRef = database.ref('posts');
+
+            // Save a new post
+            const newPost = postRef.push(); // Generate a unique ID
+            newPost.set({
+                title: title,
+                content: content,
+                timestamp: Date.now()
+            })
+            .then(() => {
+                alert('Post saved successfully!');
+                postForm.reset();
+            })
+            .catch((error) => {
+                console.error('Error saving post:', error);
+            });
+        });
+    </script>
     <footer>
         <p>&copy; 2023 School Community Hub. All rights reserved.</p>
     </footer>

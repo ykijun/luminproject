@@ -1,0 +1,146 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Set Skills & Interests - School Community Hub</title>
+    <link rel="stylesheet" href="styles.css">
+    <style>
+        /* Ensure scrolling */
+        body {
+            margin: 0;
+            padding: 0;
+            font-family: Arial, sans-serif;
+            line-height: 1.6;
+            min-height: 100vh;
+        }
+
+        main {
+            padding: 20px;
+        }
+
+        /* Fixes to enable scrolling */
+        html, body {
+            height: 100%;
+            overflow-y: auto;
+        }
+
+        fieldset {
+            margin-bottom: 20px;
+            padding: 10px;
+        }
+
+        footer {
+            text-align: center;
+            padding: 10px;
+            background: #f4f4f4;
+            position: relative;
+            bottom: 0;
+            width: 100%;
+        }
+    </style>
+</head>
+<body>
+    <header>
+        <nav>
+            <ul>
+                <li><a href="index.html">Home</a></li>
+                <li><a href="community.html">Community</a></li>
+                <li><a href="mentorship.html">Mentorship</a></li>
+                <li><a href="news.html">News</a></li>
+                <li><a href="login.html">Login</a></li>
+                <li><a href="signup.html">Sign Up</a></li>
+                <li><a href="set-skills.html">Set Skills</a></li>
+                <li><button id="logout-button" style="background:none; border:none; color:blue; cursor:pointer; text-decoration:underline;">Logout</button></li>
+            </ul>
+        </nav>
+    </header>
+    <main>
+        <h1>Set Your Skills & Interests</h1>
+        <form id="skills-form">
+            <fieldset>
+                <legend>Select Subjects:</legend>
+                <label><input type="checkbox" name="skills" value="math"> Math</label><br>
+                <label><input type="checkbox" name="skills" value="science"> Science</label><br>
+                <label><input type="checkbox" name="skills" value="english"> English</label><br>
+                <label><input type="checkbox" name="skills" value="history"> History</label><br>
+                <label><input type="checkbox" name="skills" value="geography"> Geography</label><br>
+            </fieldset>
+            <fieldset>
+                <legend>Select Hobbies:</legend>
+                <label><input type="checkbox" name="skills" value="sports"> Sports</label><br>
+                <label><input type="checkbox" name="skills" value="music"> Music</label><br>
+                <label><input type="checkbox" name="skills" value="art"> Art</label><br>
+                <label><input type="checkbox" name="skills" value="coding"> Coding</label><br>
+                <label><input type="checkbox" name="skills" value="reading"> Reading</label><br>
+            </fieldset>
+            <button type="submit">Save Skills</button>
+        </form>
+    </main>
+    <footer>
+        <p>&copy; 2023 School Community Hub. All rights reserved.</p>
+    </footer>
+
+    <script type="module">
+        import { initializeApp } from "https://www.gstatic.com/firebasejs/11.0.2/firebase-app.js";
+        import { getDatabase, ref, update } from "https://www.gstatic.com/firebasejs/11.0.2/firebase-database.js";
+        import { getAuth, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/11.0.2/firebase-auth.js";
+
+        // Firebase configuration
+        const firebaseConfig = {
+            apiKey: "AIzaSyBS8a2A7LOlRs9_lBXOv_fPud1iLg9xwO0",
+            authDomain: "loginsystem-80747.firebaseapp.com",
+            databaseURL: "https://loginsystem-80747-default-rtdb.asia-southeast1.firebasedatabase.app",
+            projectId: "loginsystem-80747",
+            storageBucket: "loginsystem-80747.appspot.com",
+            messagingSenderId: "1098923411124",
+            appId: "1:1098923411124:web:c10f65f41de6928610f9e1"
+        };
+
+        // Initialize Firebase
+        const app = initializeApp(firebaseConfig);
+        const database = getDatabase(app);
+        const auth = getAuth();
+
+        const skillsForm = document.getElementById('skills-form');
+
+        skillsForm.addEventListener('submit', (e) => {
+            e.preventDefault();
+
+            // Get selected skills
+            const selectedSkills = Array.from(document.querySelectorAll('input[name="skills"]:checked')).map(cb => cb.value);
+
+            if (selectedSkills.length === 0) {
+                alert('Please select at least one skill or interest.');
+                return;
+            }
+
+            // Save skills to the current authenticated user
+            onAuthStateChanged(auth, (user) => {
+                if (user) {
+                    const userRef = ref(database, `users/${user.uid}`);
+                    update(userRef, { skills: selectedSkills })
+                        .then(() => {
+                            alert('Skills and interests saved successfully!');
+                        })
+                        .catch((error) => {
+                            console.error('Error saving skills:', error);
+                            alert('Failed to save skills. Please try again.');
+                        });
+                } else {
+                    alert('You must be logged in to set your skills and interests.');
+                }
+            });
+        });
+         logoutButton.addEventListener('click', () => {
+            signOut(auth).then(() => {
+                alert('Logged out successfully.');
+                window.location.href = 'login.html';
+            }).catch((error) => {
+                console.error('Error during logout:', error);
+                alert('Failed to log out. Please try again.');
+            });
+        });
+    </script>
+</body>
+</html>

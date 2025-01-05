@@ -27,30 +27,48 @@
             <button type="submit">Login</button>
         </form>
         <script type="module">
-          // Import the functions you need from the SDKs you need
-          import { initializeApp } from "https://www.gstatic.com/firebasejs/11.0.1/firebase-app.js";
-          import { getAnalytics } from "https://www.gstatic.com/firebasejs/11.0.1/firebase-analytics.js";
-          // TODO: Add SDKs for Firebase products that you want to use
-          // https://firebase.google.com/docs/web/setup#available-libraries
+    import { initializeApp } from "https://www.gstatic.com/firebasejs/11.0.1/firebase-app.js";
+    import { getAuth, signInWithEmailAndPassword, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/11.0.1/firebase-auth.js";
 
-          // Your web app's Firebase configuration
-          // For Firebase JS SDK v7.20.0 and later, measurementId is optional
-          const firebaseConfig = {
-            apiKey: "AIzaSyAgeigOO0jIvjMOGQkZcH1iseehLaF7iLc",
-            authDomain: "sample-login-1cac6.firebaseapp.com",
-            projectId: "sample-login-1cac6",
-            storageBucket: "sample-login-1cac6.firebasestorage.app",
-            messagingSenderId: "11295660386",
-            appId: "1:11295660386:web:617ff045e74e1a7fcef43b",
-            measurementId: "G-J5S4KBF0F3"
-          };
+    const firebaseConfig = {
+        apiKey: "AIzaSyBS8a2A7LOlRs9_lBXOv_fPud1iLg9xwO0",
+        authDomain: "loginsystem-80747.firebaseapp.com",
+        projectId: "loginsystem-80747",
+        storageBucket: "loginsystem-80747.appspot.com",
+        messagingSenderId: "1098923411124",
+        appId: "1:1098923411124:web:c10f65f41de6928610f9e1"
+    };
 
-          // Initialize Firebase
-          const app = initializeApp(firebaseConfig);
-          const analytics = getAnalytics(app);
+    const app = initializeApp(firebaseConfig);
+    const auth = getAuth(app);
 
-          console.log(app);
-        </script>
+    // Check if the user is already logged in
+    onAuthStateChanged(auth, (user) => {
+        if (user) {
+            // User is logged in, redirect to mentorship
+            alert(`Welcome back, ${user.email}!`);
+            window.location.href = "community.html";
+        }
+    });
+
+    document.getElementById('login-form').addEventListener('submit', (event) => {
+        event.preventDefault();
+        const email = document.getElementById('email').value.trim();
+        const password = document.getElementById('password').value.trim();
+
+        signInWithEmailAndPassword(auth, email, password)
+            .then((userCredential) => {
+                const user = userCredential.user;
+                alert(`Login successful! Welcome, ${user.email}`);
+                window.location.href = "mentorship.html"; // Redirect to mentorship page
+            })
+            .catch((error) => {
+                console.error("Login error:", error);
+                alert(`Login failed: ${error.message}`);
+            });
+    });
+</script>
+
     </main>
     <footer>
         <p>&copy; 2023 School Community Hub. All rights reserved.</p>

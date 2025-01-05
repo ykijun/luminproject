@@ -35,50 +35,58 @@
         </form>
 
         <script type="module">
-          // Import the functions you need from the SDKs you need
-          import { initializeApp } from "https://www.gstatic.com/firebasejs/11.0.2/firebase-app.js";
-          // TODO: Add SDKs for Firebase products that you want to use
-          // https://firebase.google.com/docs/web/setup#available-libraries
+    import { initializeApp } from "https://www.gstatic.com/firebasejs/11.0.2/firebase-app.js";
+    import { getAuth, createUserWithEmailAndPassword } from "https://www.gstatic.com/firebasejs/11.0.2/firebase-auth.js";
+    import { getDatabase, ref, set } from "https://www.gstatic.com/firebasejs/11.0.2/firebase-database.js";
 
-          // Your web app's Firebase configuration
-          const firebaseConfig = {
-            apiKey: "AIzaSyBS8a2A7LOlRs9_lBXOv_fPud1iLg9xwO0",
-            authDomain: "loginsystem-80747.firebaseapp.com",
-            databaseURL: "https://loginsystem-80747-default-rtdb.asia-southeast1.firebasedatabase.app",
-            projectId: "loginsystem-80747",
-            storageBucket: "loginsystem-80747.firebasestorage.app",
-            messagingSenderId: "1098923411124",
-            appId: "1:1098923411124:web:c10f65f41de6928610f9e1"
-          };
+    const firebaseConfig = {
+        apiKey: "AIzaSyBS8a2A7LOlRs9_lBXOv_fPud1iLg9xwO0",
+        authDomain: "loginsystem-80747.firebaseapp.com",
+        databaseURL: "https://loginsystem-80747-default-rtdb.asia-southeast1.firebasedatabase.app",
+        projectId: "loginsystem-80747",
+        storageBucket: "loginsystem-80747.appspot.com",
+        messagingSenderId: "1098923411124",
+        appId: "1:1098923411124:web:c10f65f41de6928610f9e1"
+    };
 
-          // Initialize Firebase
-          const app = initializeApp(firebaseConfig);
+    const app = initializeApp(firebaseConfig);
+    const auth = getAuth(app);
+    const database = getDatabase(app);
 
+    document.getElementById('signup-form').addEventListener('submit', (event) => {
+        event.preventDefault();
+        const fullname = document.getElementById('fullname').value.trim();
+        const email = document.getElementById('email').value.trim();
+        const password = document.getElementById('password').value.trim();
+        const confirmPassword = document.getElementById('confirm-password').value.trim();
+        const userType = document.getElementById('user-type').value;
 
-          import { getAuth, createUserWithEmailAndPassword } from "https://www.gstatic.com/firebasejs/11.0.2/firebase-auth.js";
-            document.getElementById('signupButton').addEventListener('click', (event)=>{
+        if (password !== confirmPassword) {
+            alert("Passwords do not match.");
+            return;
+        }
 
-                event.preventDefault()
-                const auth = getAuth()
-                const email = document.getElementById('email').value
-                const password = document.getElementById('password').value
-                createUserWithEmailAndPassword(auth, email, password)
-                  .then((userCredential) => {
-                    // Signed in
-                    const user = userCredential.user;
-                    // ...
-                  })
-                  .catch((error) => {
-                    const errorCode = error.code;
-                    const errorMessage = error.message;
-                    // ..
-                  });
+        createUserWithEmailAndPassword(auth, email, password)
+            .then((userCredential) => {
+                const user = userCredential.user;
 
-            
-                
-                
+                // Save additional user details to the database
+                set(ref(database, 'users/' + user.uid), {
+                    name: fullname,
+                    email: email,
+                    role: userType,
+                    skills: [] // Empty skills for now
+                });
+
+                alert('User created successfully!');
+                window.location.href = 'login.html'; // Redirect to login
             })
-        </script>
+            .catch((error) => {
+                console.error("Error:", error);
+                alert(error.message);
+            });
+    });
+</script>
 
     </main>
     <footer>

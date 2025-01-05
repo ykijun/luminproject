@@ -16,6 +16,7 @@
                 <li><a href="news.html">News</a></li>
                 <li><a href="login.html">Login</a></li>
                 <li><a href="signup.html">Sign Up</a></li>
+                <li><button id="logout-btn" style="display: none;">Logout</button></li>
             </ul>
         </nav>
     </header>
@@ -33,11 +34,111 @@
                 <button type="submit">Find Match</button>
             </form>
         </div>
-        <div id="matches-container"></div>
+        <div id="matches-container">
+            <h2>Matches</h2>
+            <ul id="matches-list"></ul>
+        </div>
     </main>
     <footer>
         <p>&copy; 2023 School Community Hub. All rights reserved.</p>
     </footer>
-    <script src="script.js"></script>
+
+    <script type="module">
+    import { initializeApp } from "https://www.gstatic.com/firebasejs/11.0.2/firebase-app.js";
+    import { getDatabase, ref, onValue } from "https://www.gstatic.com/firebasejs/11.0.2/firebase-database.js";
+    import { getAuth, signOut } from "https://www.gstatic.com/firebasejs/11.0.2/firebase-auth.js"; 
+
+    // Firebase configuration
+    const firebaseConfig = {
+        apiKey: "AIzaSyBS8a2A7LOlRs9_lBXOv_fPud1iLg9xwO0",
+        authDomain: "loginsystem-80747.firebaseapp.com",
+        databaseURL: "https://loginsystem-80747-default-rtdb.asia-southeast1.firebasedatabase.app",
+        projectId: "loginsystem-80747",
+        storageBucket: "loginsystem-80747.appspot.com",
+        messagingSenderId: "1098923411124",
+        appId: "1:1098923411124:web:c10f65f41de6928610f9e1"
+    };
+
+    // Initialize Firebase
+    const app = initializeApp(firebaseConfig);
+    const database = getDatabase(app);
+    const auth = getAuth(app);
+
+    const mentorshipForm = document.getElementById('mentorship-match-form');
+    const matchesList = document.getElementById('matches-list');
+
+    mentorshipForm.addEventListener('submit', (e) => {
+        e.preventDefault();
+
+        const role = document.getElementById('role').value;
+        const skillsInput = document.getElementById('skills').value;
+        const skills = skillsInput.split(',').map(skill => skill.trim().toLowerCase());
+
+        if (!role || skills.length === 0) {
+            alert('Please select a role and enter at least one skill.');
+            return;
+        }
+
+        fetchMatches(role, skills);
+    });
+
+    const fetchMatches = (role, skills) => {
+        matchesList.innerHTML = '<li>Loading matches...</li>';
+        const usersRef = ref(database, 'users');
+
+        // Determine userType for matching
+        const targetUserType = role === 'mentor' ? 'student' : 'alumni';
+
+        onValue(usersRef, (snapshot) => {
+            const users = snapshot.val();
+            matchesList.innerHTML = '';
+            if (users) {
+                const matches = Object.values(users).filter(user => {
+                    return (
+                        user.userType === targetUserType && // Match based on userType
+                        skills.some(skill => user.skills?.includes(skill)) // Match skills
+                    );
+                });
+
+                if (matches.length > 0) {
+                    matches.forEach(match => {
+                        const li = document.createElement('li');
+                        li.innerHTML = `<strong>${match.name}</strong> (${match.userType})<br>
+                            Skills: ${match.skills.join(', ')}<br>
+                            Email: ${match.email}`;
+                        matchesList.appendChild(li);
+                    });
+                } else {
+                    matchesList.innerHTML = '<li>No matches found.</li>';
+                }
+            } else {
+                matchesList.innerHTML = '<li>No users available.</li>';
+            }
+        }, (error) => {
+            console.error('Error fetching users:', error);
+            matchesList.innerHTML = '<li>Error loading matches.</li>';
+        });
+    };
+     // Handle logout
+        const logoutButton = document.getElementById('logout-btn');
+        logoutButton.addEventListener('click', () => {
+            signOut(auth).then(() => {
+                alert("You have logged out successfully.");
+                window.location.href = "index.html"; // Redirect to homepage or login page
+            }).catch((error) => {
+                console.error('Error logging out:', error);
+                alert('An error occurred while logging out.');
+            });
+        });
+
+        // Check if user is logged in and show logout button
+        auth.onAuthStateChanged((user) => {
+            if (user) {
+                document.getElementById('logout-btn').style.display = 'inline-block'; // Show logout button if logged in
+            } else {
+                document.getElementById('logout-btn').style.display = 'none'; // Hide logout button if not logged in
+            }
+        });
+</script>
 </body>
 </html>
